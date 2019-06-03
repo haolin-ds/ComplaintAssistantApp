@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/css/bootstrap-slider.min.css">
+    <link rel="shortcut icon" href="/static/virtual-assistant-icon.jpg" />
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.min.js"></script>
+    <title>Complaint Assistant</title>
+    <style>
+        body {
+            height: 100%;
+            background-color: transparent;
+        }
+        
+        html {
+            background: url("/static/img/escalate.webp") no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            height: 100%;
+            margin: 0;
+        }
+        
+        #search-bar {
+            margin-top: 30px;
+        }
+        
+        #narrative {
+            color: #555;
+            background-color: #fff;
+            border-radius: 0.25rem;
+            border: 1px solid #6c757d;
+            padding: 7px;
+            font-size: 0.9em;
+            width: 300px;
+        }
+        
+        .site-label {
+            color: #fff;
+            font-weight: 600;
+            display: block;
+            font-size: 1.2em;
+            text-decoration: underline;
+        }
+        
+        .result {
+            background-color: #333;
+            border-radius: 0.2rem;
+            border: 1px solid #333;
+            min-height: 300px;
+            width: 100%;
+            padding: 7px;
+            opacity: 0.9;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        
+        .table {
+            color: #fff;
+        }
+        
+        .nav-link {
+            color: #fff;
+            font-weight: 1.2em;
+        }
+        
+        .nav-link:hover {
+            color: #fff;
+            font-weight: 1.2em;
+        }
+        #advanced-options{
+            color: #fff;
+            font-weight: 1.1em;
+        }
+        #distance-slider .slider-selection {
+            background: #BABABA;
+        }
+        .advanced-option-header{
+            font-weight: bold;
+        }
+        #facility-wrapper{
+            display: flex;
+        }
+        #activity-wrapper{
+            display: flex;
+        }
+        .form-check{
+            margin-left: 10px;
+        }
+        .map {
+            height: 300px;  /* The height is 400 pixels */
+            width: 100%;  /* The width is the width of the web page */
+        }
+        #search-result{
+            margin-top: 20px;
+        }
+        .review{
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body class='body'>
+    <header>
+        <div class="navbar navbar-dark bg-dark shadow-sm">
+            <div class="container d-flex justify-content-between">
+                <a href="#" class="navbar-brand d-flex align-items-center">
+                    <strong>Complaint Assistant</strong>
+                </a>
+                <a href="#" class="navbar-brand d-flex align-items-center">
+                    Your assistant to prevent complaint escalation
+                </a>
+            </div>
+        </div>
+    </header>
+    <div class='container'>
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-lucky-tab" data-toggle="tab" href="#nav-feel-lucky" role="tab" aria-selected="true">
+                    Feel Lucky
+                </a>
+                <a class="nav-item nav-link" id="nav-advanced-tab" data-toggle="tab" href="#nav-advanced" role="tab" aria-selected="false">
+                    Advanced Search
+                </a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-feel-lucky" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div id="content-wrapper">
+                    <div class="ui-widget" id='search-bar'>
+                        <input id="narrative" placeholder="Please type in a complaint">
+                        <button class='btn btn-secondary' style="display: inline-block" id='predict-button'>Predict</button>
+                    </div>
+
+                    <div id='search-result'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- this is the template for result display-->
+    <div id="result_template" style='display: none'>
+        <div class='result'>
+            <div class='row'>
+                <div class="col">
+                    <h4 class='title'></h4>
+                    <div class='map' id='map1'>map goes here</div>
+                </div>
+                <div class="col">
+                    <div>
+                        <div class='site-label'>Summary of Reviews</div>
+                        <div class='review'></div>
+                    </div>
+                    <div>
+                        <div class='site-label'>Facilities and Activities</div>
+                        <div class='features'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-kqMIZcdDjtIDIyeHU1vZM75nllLG9VM">
+    </script>
+</body>
+<script>
+    $(function() {
+        var availableSites = [
+            {% for name in all_sites %}
+            "{{name | safe}}", 
+            {% endfor %}
+        ];
+
+        var slider = $('#distance').bootstrapSlider().on('slide', function(){
+            $('#distance-value').text(slider.val() + 'KM');
+        });
+        var resetResult = function(){
+            $('#search-result').empty()
+            $('#narrative').val('')
+        };
+        $('#nav-lucky-tab').click(function(){
+            if($(this).hasClass('active')){
+                return;
+            }
+            resetResult();
+
+        });
+        $('#nav-advanced-tab').click(function(){
+            if($(this).hasClass('active')){
+                return;
+            }
+            resetResult();
+
+        });
+        $("#narrative").autocomplete({
+            source: availableSites
+        });
+
+        var initMap = function(id, lat, lng) {
+            var location = {lat: lat, lng: lng};
+            // The map, centered at location
+            var map = new google.maps.Map(
+                document.getElementById(id), {zoom: 7, center: location});
+            // The marker, positioned at location
+            var marker = new google.maps.Marker({position: location, map: map});
+        }
+
+        var process_result = function(data) {
+            $('#search-result').empty();
+            for (var i = 1; i < data.length; i++) {
+                d = data[i];
+                row = $($('#result_template').html());
+                row.find('.title').html(d.name);
+                row.find('.review').html(d.sum_rv);
+                row.find('.features').html(d.facilities_activities)
+                map_id = 'map-'+i;
+                row.find('.map').attr('id', map_id);
+                
+                row.appendTo('#search-result');
+                initMap(map_id, d.latitude, d.longitude);
+
+            }
+
+        };
+        $('#predict-button').click(function() {
+            var url = '/predictions';
+            var data = {
+                'name': $('#narrative').val()
+            }
+            if($('#nav-advanced-tab').hasClass('active'))
+            {
+                //append the other things
+                $("input[type='checkbox']").each(function(){
+                    if($(this).is(':checked')){
+                        data[$(this).attr('id')] = true;
+                    }
+                });
+            }
+            console.log(data);
+            $.ajax({
+                'url': url,
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(data),
+                contentType: "application/json"
+            }).done(process_result)
+            .fail(function(data) {
+                console.log(data)
+            });
+        })
+    });
+</script>
+
+</html>

@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+.idea/
+.DS_Store
+data/
+figs/
+trained_models/
+
+
 # Distribution / packaging
 .Python
 build/
