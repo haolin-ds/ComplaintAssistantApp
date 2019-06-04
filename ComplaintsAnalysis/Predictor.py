@@ -7,8 +7,7 @@ from scipy.sparse import hstack
 
 from ComplaintsAnalysis.SentimentMetricGenerator import generate_sentiment_metric
 from ComplaintsAnalysis.TextPreprocess import pre_process_narrative
-from ComplaintsAnalysis.Utilities import load_models, get_response_types
-from ComplaintsAnalysis.ProductClassifier import PRODUCT_LABELS
+from ComplaintsAnalysis.Utilities import load_models, get_response_types, PRODUCT_LABELS
 
 
 class Predictor:
@@ -49,7 +48,7 @@ class Predictor:
 
         # Predict the product type of this complaint
         product_type = self.predict_product_type(narrative_vectorized)
-        print("The complaint is about " + product_type)
+        #print("The complaint is about " + product_type)
 
         # Predict the probabilities of escalation when adopting
         escalation_prob_fig, response = self.predict_escalation(narrative_vectorized,
@@ -58,7 +57,8 @@ class Predictor:
         return product_type, escalation_prob_fig, response
 
     def predict_product_type(self, narrative_vectorized):
-        product_type_prob = self.clf_product.predict(narrative_vectorized)[0]
+        # product_type_prob = self.clf_product.predict(narrative_vectorized)[0]
+        product_type_prob = self.clf_product.predict_proba(narrative_vectorized)[0]
         index_product_most_prob = np.argmax(product_type_prob)
         product_type = PRODUCT_LABELS[index_product_most_prob]
         return product_type
@@ -82,17 +82,18 @@ class Predictor:
 
             X_to_predict = hstack((narrative_vectorized, np.array(sentiment_metric)))
             result = self.clf_escalation.predict(X_to_predict)
+            """
             if result:
                 print("If respond with {}, there will have escalation!".format(response))
             else:
                 print("If respond with {}, there is no escalation!".format(response))
-
+            """
             predict_probability = self.clf_escalation.predict_proba(X_to_predict)[0][1]
-            print(predict_probability)
+            # print(predict_probability)
             predict_probability_list.append(predict_probability)
 
         # Draw bar chart of escalation probability under different responses
-        escalation_prob_fig = "static/img/escalation_prob.png"
+        escalation_prob_fig = "static/escalation_prob.png"
 
         data = pd.DataFrame()
         data["Company Response"] = response_types
