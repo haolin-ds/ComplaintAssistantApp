@@ -13,8 +13,7 @@ PRODUCT_LABELS = ['Bank account or service',
                   'Consumer Loan',
                   'Money transfers',
                   'Prepaid card',
-                  'Other financial service',
-                  'Virtual currency']
+                  'Other financial service']
 
 
 def save_model(model, output_file):

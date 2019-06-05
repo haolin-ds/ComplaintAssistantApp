@@ -22,28 +22,32 @@ def home_page():
 
 @app.route('/predict')
 def predict():
-       # Pull input
-       narrative =request.args.get('user_input')
-    
-       # Case if user input is empty
-       if narrative == '':
-           return render_template("index.html",
-                                  user_input="Empty")
-       else:
-           product_type, escalation_prob_fig, suggest_response = predictor.predict(narrative)
+    # Pull input
+    narrative =request.args.get('user_input')
 
-           print(product_type)
-           escalation_prob_fig = escalation_prob_fig.split("/")[1]
-           print(escalation_prob_fig)
-           suggest_response = suggest_response.split("_")[-1]
-           print(suggest_response)
+    # Case if user input is empty
+    if narrative == '':
+        return render_template("index.html",
+                              user_input="Empty")
+    else:
+        product_type, escalation_prob_fig, suggest_response = predictor.predict(narrative)
 
-           return render_template("index.html",
-                                  product_type=product_type,
-                                  escalation_prob_img=escalation_prob_fig,
-                                  suggest_response=suggest_response,
-                                  narrative=narrative,
-                                  user_input="NotEmpty")
+        print(product_type)
+        escalation_prob_fig = escalation_prob_fig.split("/")[1]
+        print(escalation_prob_fig)
+        suggest_response = suggest_response.split("_")[-1]
+        print(suggest_response)
+
+        # Test
+        will_escalate = 1
+
+        return render_template("index.html",
+                              product_type=product_type,
+                              escalation_prob_img=escalation_prob_fig,
+                              suggest_response=suggest_response,
+                              narrative=narrative,
+                              will_escalate= will_escalate,
+                              user_input="NotEmpty")
 
 
 # start the server with the 'run()' method
