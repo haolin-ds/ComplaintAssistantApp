@@ -30,7 +30,7 @@ def predict():
         return render_template("index.html",
                               user_input="Empty")
     else:
-        product_type, escalation_prob_fig, suggest_response = predictor.predict(narrative)
+        product_type, escalation_prob_fig, suggest_response, probs = predictor.predict(narrative)
 
         print(product_type)
         escalation_prob_fig = escalation_prob_fig.split("/")[1]

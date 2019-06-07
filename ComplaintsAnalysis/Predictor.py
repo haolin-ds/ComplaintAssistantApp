@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
+import re
 import matplotlib.pyplot as plt
-import seaborn
 
 from scipy.sparse import hstack
 
@@ -15,10 +15,9 @@ class Predictor:
         print("Loading models...")
         model_dir = "ComplaintsAnalysis/trained_models"
         clf_product_file = model_dir + "/" + "product_classifier_lgreg.sav"
-        clf_escalation_file = model_dir + "/" + "lgreg.all.pickle"
-        tf_idf_vectorizer_file = model_dir + "/" + "tfidf_vectorizer_max10000.all.pickle"
-        scaler_file = model_dir + "/" + "scaler.pickle"
-
+        clf_escalation_file = model_dir + "/" + "lgreg.all.joblib"
+        tf_idf_vectorizer_file = model_dir + "/" + "tfidf_vectorizer_max50000.all.joblib"
+        scaler_file = model_dir + "/" + "scaler.joblib"
         self.clf_product, self.clf_escalation, self.tf_idf_vectorizer, self.scaler = load_models(clf_product_file,
                                                                              clf_escalation_file,
                                                                              tf_idf_vectorizer_file,
@@ -37,30 +36,38 @@ class Predictor:
         :return: product category, bar chart, the suggest response type
         """
         sentiment_metric = generate_sentiment_metric([narrative])
-        sentiment_metric.loc[:, ["word_num", "sentence_num"]] = self.scaler.transform(sentiment_metric.loc[:, ["word_num", "sentence_num"]])
+        sentiment_metric.loc[:, ["word_num", "sentence_num"]] = self.scaler.transform(
+            sentiment_metric.loc[:, ["word_num", "sentence_num"]])
 
         # Transfer narrative to feature vector be used by classifier
         preprocessed_narrative = pre_process_narrative(narrative)
-        data = pd.DataFrame({"processed_narrative": preprocessed_narrative})
+        narrative = " ".join(preprocessed_narrative)
 
-        narrative_vectorized = self.tf_idf_vectorizer.transform(data)
-        #print(narrative_vectorized.shape)
+        narrative_vectorized = self.tf_idf_vectorizer.transform([narrative])
+
+        # print("tf_idf sum: {}".format(np.sum(narrative_vectorized.max(axis=0).toarray().ravel())))
 
         # Predict the product type of this complaint
         product_type = self.predict_product_type(narrative_vectorized)
-        #print("The complaint is about " + product_type)
+        # print("The complaint is about " + product_type)
 
         # Predict the probabilities of escalation when adopting
-        escalation_prob_fig, response = self.predict_escalation(narrative_vectorized,
-                                                                sentiment_metric)
+        escalation_prob_fig, response, escalation_probas_according_response = self.predict_escalation(narrative_vectorized,
+                                                                                                      sentiment_metric)
 
-        return product_type, escalation_prob_fig, response
+        response = response.split("_")[-1]
+        response = re.sub(r"Closed with ", "", response).capitalize()
+
+        return product_type, escalation_prob_fig, response, escalation_probas_according_response
 
     def predict_product_type(self, narrative_vectorized):
-        # product_type_prob = self.clf_product.predict(narrative_vectorized)[0]
+        # product_type_list = clf_product.predict(narrative_vectorized)[0]
         product_type_prob = self.clf_product.predict_proba(narrative_vectorized)[0]
+        # print(product_type_prob)
         index_product_most_prob = np.argmax(product_type_prob)
+        # print(index_product_most_prob)
         product_type = PRODUCT_LABELS[index_product_most_prob]
+
         return product_type
 
     def predict_escalation(self, narrative_vectorized, sentiment_metric):
@@ -82,12 +89,14 @@ class Predictor:
 
             X_to_predict = hstack((narrative_vectorized, np.array(sentiment_metric)))
             result = self.clf_escalation.predict(X_to_predict)
+
             """
             if result:
                 print("If respond with {}, there will have escalation!".format(response))
             else:
                 print("If respond with {}, there is no escalation!".format(response))
             """
+
             predict_probability = self.clf_escalation.predict_proba(X_to_predict)[0][1]
             # print(predict_probability)
             predict_probability_list.append(predict_probability)
@@ -99,19 +108,23 @@ class Predictor:
         data["Company Response"] = response_types
         data["Probability of Escalation"] = predict_probability_list
 
-        data.plot.bar()
-        plt.xlabel("Company Response Types")
-        plt.ylabel("Probability of Escalate")
-        plt.xticks(np.arange(6), response_types, size=12)
-        plt.yticks(np.arange(0, 1, step=0.1))
-        #plt.tight_layout()
-        plt.gcf().subplots_adjust(bottom=0.45)
-        plt.savefig(escalation_prob_fig)
+        plt.figure(figsize=(5, 8))
+        barlist = plt.bar(response_types, predict_probability_list, alpha=0.8)
+        for i in np.arange(len(predict_probability_list)):
+            if predict_probability_list[i] >= 0.5:
+                barlist[i].set_color('r')
+
+        plt.ylabel('Probability of Escalation', fontsize=12)
+        plt.xlabel('Company Response Types', fontsize=12)
+        plt.xticks(rotation=45)
+        plt.yticks(np.arange(0, 1.1, step=0.1))
+        plt.gcf().subplots_adjust(bottom=0.35)
+        plt.savefig(escalation_prob_fig, bbox_inches='tight')
 
         # Suggest the response type to be the one with minimum probability to escalate
         suggested_response = response_types[predict_probability_list.index(min(predict_probability_list))]
 
-        return escalation_prob_fig, suggested_response
+        return escalation_prob_fig, suggested_response, predict_probability_list
 
     def test(self):
         print("Predicting...")
