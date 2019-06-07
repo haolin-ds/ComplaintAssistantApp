@@ -61,28 +61,11 @@
             color: #fff;
             font-weight: 1.1em;
         }
-        #distance-slider .slider-selection {
-            background: #BABABA;
-        }
-        .advanced-option-header{
-            font-weight: bold;
-        }
-        #facility-wrapper{
-            display: flex;
-        }
-        #activity-wrapper{
-            display: flex;
-        }
+
         .form-check{
             margin-left: 10px;
         }
-        .map {
-            height: 300px;  /* The height is 400 pixels */
-            width: 100%;  /* The width is the width of the web page */
-        }
-        #search-result{
-            margin-top: 20px;
-        }
+
         .review{
             margin-bottom: 10px;
         }
@@ -107,10 +90,10 @@
     <br></br>
 
     <div class="container">
-        <div class="col-lg-6">
+        <div class="col-lg">
           <div class="input-group">
               <form action="/predict" method="GET" id="user_input">
-                    <input class="form-control" type="text" id="narrative" name='user_input' placeholder="Input a complaint narrative please">
+                    <input class="form-control" type="text" size=35 id="narrative" name='user_input' placeholder="Input a complaint narrative please">
               </form>
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-secondary" form="user_input" style="display: inline-block" >Predict</button>
@@ -139,18 +122,18 @@
                         <p></p>
                     </div>
                     <div class="row">
-                        <div class="alert alert-info" role="alert">Complaint is about {{product_type}} </div>
+                        <div class="alert alert-info" role="alert">Complaint is about <strong>{{product_type}}</strong> </div>
                     </div>
 
                     <div class="row">
                         {% if will_escalate==1 %}
-                            <div class="alert alert-warning" role="warning">Warning! There is chance of escalation!</div>
+                            <div class="alert alert-warning" role="warning">Warning! There is a chance of escalation!</div>
                         {% else %}
                             <div class="alert alert-info" role="alert">There will probably be no escalation. </div>
                         {% endif %}
                     </div>
                     <div class="row">
-                        <div class="alert alert-info" role="alert">Suggested response types is {{suggest_response}} </div>
+                        <div class="alert alert-info" role="alert">Suggested response types is <strong>{{suggest_response}}</strong> </div>
                     </div>
                 </div>
                 <div class="col">
