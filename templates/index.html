@@ -108,7 +108,7 @@
     <div class="container">
       {% if user_input=='Empty' %}
         <div class="row mt-4 justify-content-center">
-            <h4 class="text-center">Please input a complaint narrative!</h4>
+            <div class="alert alert-info" style="" role="alert">Please input a complaint narrative!</div>
         </div>
 
       {% elif user_input=='NotEmpty' %}
@@ -121,27 +121,27 @@
                     <div class="row">
                         <p></p>
                     </div>
-                    <div class="row">
+                    <div class="row justify-content-center">
                         <div class="alert alert-info" role="alert">Complaint is about <strong>{{product_type}}</strong> </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row justify-content-center">
                         {% if will_escalate==1 %}
                             <div class="alert alert-warning" role="warning">Warning! There is a chance of escalation!</div>
                         {% else %}
                             <div class="alert alert-info" role="alert">There will probably be no escalation. </div>
                         {% endif %}
                     </div>
-                    <div class="row">
+                    <div class="row justify-content-center">
                         <div class="alert alert-info" role="alert">Suggested response types is <strong>{{suggest_response}}</strong> </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div>
+                    <div style="text-align:center">
                         <p>Escalation Probability with Different Responses</p>
                     </div>
                     <div>
-                        <img src="{{ url_for('static', filename = escalation_prob_img)}}"  width=400 height=500/>
+                        <img src="{{ url_for('static', filename = escalation_prob_img)}}"  width=500 height=500/>
                     </div>
                 </div>
             </div>

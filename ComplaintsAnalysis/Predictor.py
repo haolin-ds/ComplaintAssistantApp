@@ -108,7 +108,7 @@ class Predictor:
         data["Company Response"] = response_types
         data["Probability of Escalation"] = predict_probability_list
 
-        plt.figure(figsize=(5, 8))
+        plt.figure(figsize=(5, 5))
         barlist = plt.bar(response_types, predict_probability_list, alpha=0.8)
         for i in np.arange(len(predict_probability_list)):
             if predict_probability_list[i] >= 0.5:

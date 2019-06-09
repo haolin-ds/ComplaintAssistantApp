@@ -38,8 +38,10 @@ def predict():
         suggest_response = suggest_response.split("_")[-1]
         print(suggest_response)
 
-        # Test
-        will_escalate = 1
+        will_escalate = 0
+        for prob in probs:
+            if prob > 0.5:
+                will_escalate = 1
 
         return render_template("index.html",
                               product_type=product_type,
