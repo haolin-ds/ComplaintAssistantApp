@@ -18,11 +18,11 @@ predict complaint escalation and adopt better response type.  It is leveraged by
 machine learning and natural language processing (NLP) techniques. The website is 
 [Complaint Assistant](http://complaintassistant.best), developed using Flask and 
 is deployed on Amazon Web Service (AWS). If you want to understand the machine learning
- model used, please refer to the kernel repository [Complaints Analysis](http://)
+ model used, please refer to the kernel repository [Complaints Analysis](https://github.com/atuSpirit/ComplaintsAnalysis)
 
 ## Historical Data Used
 The historical data used to build the app are more than 16K consumer complaints about
-financial products and services in [Consumer Complaint Database](http://) 
+financial products and services in [Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/search/?from=0&searchField=all&searchText=&size=25&sort=created_date_desc) 
 in US government website. 
 
 ## What can Complaint Assistant do?
