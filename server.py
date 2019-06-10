@@ -11,6 +11,7 @@ from flask import Flask, render_template, request
 from ComplaintsAnalysis.Predictor import Predictor
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
 # prepare the model
 predictor = Predictor()
@@ -56,3 +57,8 @@ def predict():
 if __name__ == "__main__":
     app.run(debug=False) #will run locally http://127.0.0.1:5000/
 
+@app.after_request
+def add_header(response):
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
