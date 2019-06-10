@@ -33,11 +33,11 @@ def predict():
     else:
         product_type, escalation_prob_fig, suggest_response, probs = predictor.predict(narrative)
 
-        print(product_type)
+        #print(product_type)
         escalation_prob_fig = escalation_prob_fig.split("/")[1]
-        print(escalation_prob_fig)
+        #print(escalation_prob_fig)
         suggest_response = suggest_response.split("_")[-1]
-        print(suggest_response)
+        #print(suggest_response)
 
         will_escalate = 0
         for prob in probs:
@@ -59,6 +59,8 @@ if __name__ == "__main__":
 
 @app.after_request
 def add_header(response):
-    if 'Cache-Control' not in response.headers:
-        response.headers['Cache-Control'] = 'no-store'
+    # response.cache_control.no_store = True
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
     return response

@@ -2,10 +2,8 @@ import re
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
-# from spacy.lang.en.stop_words import STOP_WORDS
 import nltk
 import pandas as pd
-import scipy
 from joblib import dump
 
 
