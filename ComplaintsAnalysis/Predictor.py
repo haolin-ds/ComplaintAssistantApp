@@ -108,10 +108,11 @@ class Predictor:
         data["Company Response"] = response_types
         data["Probability of Escalation"] = predict_probability_list
 
+        escalation_prob_thresh = 0.5
         plt.figure(figsize=(5, 5))
         barlist = plt.bar(response_types, predict_probability_list, alpha=0.8)
         for i in np.arange(len(predict_probability_list)):
-            if predict_probability_list[i] >= 0.5:
+            if predict_probability_list[i] >= escalation_prob_thresh:
                 barlist[i].set_color('r')
 
         plt.ylabel('Probability of Escalation', fontsize=12)
@@ -121,8 +122,20 @@ class Predictor:
         plt.gcf().subplots_adjust(bottom=0.35)
         plt.savefig(escalation_prob_fig, bbox_inches='tight')
 
-        # Suggest the response type to be the one with minimum probability to escalate
-        suggested_response = response_types[predict_probability_list.index(min(predict_probability_list))]
+        # Suggest the response type not to be the one with minimum probability to escalate,
+        # because money-relief will always be the one with lowest probabilty. However, money
+        # relief need cost. Current criteria is to pick the one with max prob but lower than
+        # a given threshold
+        suggested_prob_thresh = escalation_prob_thresh - 0.15
+        min_prob = min(predict_probability_list)
+        suggested_index = predict_probability_list.index(min(predict_probability_list))
+        for index in np.arange(len(predict_probability_list)):
+            if (predict_probability_list[index] < suggested_prob_thresh) & \
+                    (predict_probability_list[index] > min_prob):
+                min_prob = predict_probability_list[index]
+                suggested_index = index
+
+        suggested_response = response_types[suggested_index]
 
         return escalation_prob_fig, suggested_response, predict_probability_list
 

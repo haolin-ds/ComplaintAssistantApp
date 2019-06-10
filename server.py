@@ -12,7 +12,7 @@ from ComplaintsAnalysis.Predictor import Predictor
 
 app = Flask(__name__)
 
-#prepare the model
+# prepare the model
 predictor = Predictor()
 print('model is ready')
 
