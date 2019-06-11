@@ -20,6 +20,9 @@ machine learning and natural language processing (NLP) techniques. The website i
 is deployed on Amazon Web Service (AWS). If you want to understand the machine learning
  model used, please refer to the kernel repository [Complaints Analysis](https://github.com/atuSpirit/ComplaintsAnalysis)
 
+## Website
+[http://complaintassistant.best](http://complaintassistant.best)
+
 ## Historical Data Used
 The historical data used to build the app are more than 16K consumer complaints about
 financial products and services in [Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/search/?from=0&searchField=all&searchText=&size=25&sort=created_date_desc) 
@@ -34,5 +37,5 @@ type with maximum probability of escalation under a given threshold(currently 0.
 use the response with lowest escalation probability as suggested response types, because 
 "Money Relief" is always the winner.  However, "Money Relief" has more cost than other 
 response type for a company. Later, I will consider the cost of response type in my model. 
-[Website Example](https://drive.google.com/open?id=1znRiE_AXbRm965e6I2LLGfm0r1BZs9ZT)
+![Website Example](static/img/website_view.png)
 
