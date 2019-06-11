@@ -7,9 +7,10 @@ import pandas as pd
 from joblib import dump
 
 
-def merge_stop_word():
+def merge_stop_word(merged_stop_word_file):
     """
     Merge stop words from two libraries and customized words.
+    :merged_stop_word_file: The file to export merged_stop_words
     :return: a list of stop_words
     """
 
@@ -26,7 +27,12 @@ def merge_stop_word():
     for x in words_with_emotion:
         all_stopwords.remove(x)
 
-    return list(all_stopwords)
+    with open(merged_stop_word_file, "w") as fobj:
+        for x in all_stopwords:
+            fobj.write(x)
+            fobj.write(",")
+
+    # return list(all_stopwords)
 
 
 def convert_pos_tag(tag):
@@ -43,7 +49,7 @@ def convert_pos_tag(tag):
         return 'n'  # everything else = noun.
 
 
-def pre_process_narrative(narrative):
+def pre_process_narrative(narrative, all_stopwords):
     """
     Tokenize, lemmetize, remove stop_words from a complaint narrative
     :param narrative: one complaint narrative
@@ -53,9 +59,6 @@ def pre_process_narrative(narrative):
     # narrative = re.sub(r"\d+", "DIGITS", narrative)
     narrative = re.sub(r"\d+", "", narrative)
     narrative = re.sub(r"XXXX", "", narrative)
-
-    # Prepare stop-words list
-    all_stopwords = merge_stop_word()
 
     # Tokenize the narrative
     tokens = [word.lower() for word in nltk.word_tokenize(narrative) if word.isalpha()]
@@ -73,7 +76,6 @@ def pre_process_narrative(narrative):
     return tokens_lemmarized_nostop
 
 
-# TODO seems no use
 def pre_process(complaints):
     """
     Pre-process each narrative in complaints dataframe.
@@ -82,6 +84,7 @@ def pre_process(complaints):
     """
     narratives = complaints["Consumer complaint narrative"]
     processed_narratives = []
+    all_stop_words = load_stop_words()
 
     i = 0
     for narrative in narratives:
@@ -96,7 +99,7 @@ def pre_process(complaints):
         narrative = re.sub(r"XX", "", narrative)
 
         # Pre-process each narrative
-        processed_narratives.append(pre_process_narrative(narrative))
+        processed_narratives.append(pre_process_narrative(narrative, all_stopwords))
         i += 1
 
     complaints["processed_narrative"] = processed_narratives
@@ -180,3 +183,6 @@ def run_tf_idf():
 
 
 #text_preprocess()
+
+#stop_word_file = "STOP_WORDs.txt"
+#merge_stop_word(stop_word_file)

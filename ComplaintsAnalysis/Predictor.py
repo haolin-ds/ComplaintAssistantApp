@@ -18,10 +18,12 @@ class Predictor:
         clf_escalation_file = model_dir + "/" + "lgreg.all.joblib"
         tf_idf_vectorizer_file = model_dir + "/" + "tfidf_vectorizer_max50000.all.joblib"
         scaler_file = model_dir + "/" + "scaler.joblib"
-        self.clf_product, self.clf_escalation, self.tf_idf_vectorizer, self.scaler = load_models(clf_product_file,
+        stop_words_file = model_dir + "/" + "STOP_WORDs.txt"
+        self.clf_product, self.clf_escalation, self.tf_idf_vectorizer, self.scaler, self.stop_words = load_models(clf_product_file,
                                                                              clf_escalation_file,
                                                                              tf_idf_vectorizer_file,
-                                                                             scaler_file)
+                                                                             scaler_file,
+                                                                             stop_words_file)
 
     def predict(self, narrative):
         """
@@ -40,7 +42,7 @@ class Predictor:
             sentiment_metric.loc[:, ["word_num", "sentence_num"]])
 
         # Transfer narrative to feature vector be used by classifier
-        preprocessed_narrative = pre_process_narrative(narrative)
+        preprocessed_narrative = pre_process_narrative(narrative, self.stop_words)
         narrative = " ".join(preprocessed_narrative)
 
         narrative_vectorized = self.tf_idf_vectorizer.transform([narrative])

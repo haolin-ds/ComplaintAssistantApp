@@ -56,13 +56,20 @@ def get_response_types():
     return chopped_response_types
 
 
-def load_models(clf_product_file, clf_escalation_file, tf_idf_vectorizer_file, scaler_file):
+def load_stop_words(stop_words_file):
+    with open(stop_words_file, "r") as fobj:
+        stop_words = fobj.readline().rstrip().split(",")
+    return stop_words
+
+
+def load_models(clf_product_file, clf_escalation_file, tf_idf_vectorizer_file, scaler_file, stop_words_file):
     clf_product = load_model(clf_product_file)
     clf_escalation = load_model(clf_escalation_file)
     tf_idf_vectorizer = load_model(tf_idf_vectorizer_file)
     scaler = load_model(scaler_file)
+    stop_words = load_stop_words(stop_words_file)
 
-    return clf_product, clf_escalation, tf_idf_vectorizer, scaler
+    return clf_product, clf_escalation, tf_idf_vectorizer, scaler, stop_words
 
 
 def draw_roc_curve(title, save_file, fpr_list, tpr_list, roc_auc_list, label_name_list, draw_micro=False):
