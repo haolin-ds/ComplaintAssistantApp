@@ -24,7 +24,7 @@ def home_page():
 @app.route('/predict')
 def predict():
     # Pull input
-    narrative =request.args.get('user_input')
+    narrative = request.args.get('user_input')
 
     # Case if user input is empty
     if narrative == '':

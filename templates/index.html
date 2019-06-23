@@ -93,10 +93,15 @@
         <div class="col-lg">
           <div class="input-group">
               <form action="/predict" method="GET" id="user_input">
-                    <input class="form-control" type="text" size=35 id="narrative" name='user_input' placeholder="Input a complaint narrative please">
+                  <input class="form-control" type="text" size=35 id="narrative" name='user_input' list="sample_data" placeholder="Input a complaint narrative please">
+                  <datalist id="sample_data">
+                      <option value="I have a complaint regarding the overdraft fees that were billed to my checking account. I have a complaint regarding the overdraft fees that were billed to mychecking account. I was charged XXXX overcharge fees for XXXX withdrawals in which I had funds in the account. I contact your office and spoke with a representativewho credited me with XXXX of the fees back. However, the XXXX fee was never credited. I just do n't understand how I can billed for an overdraft fee when the fundswere in my accounts. I contacted the office of the president for Flagstar Bank and my compliant was pushed aside. Flagstar has now filed a writ of garnishmentwith my employer."></option>
+                      <option value="This file has been relisted on my credit report with a date of 2015. It 's a old file which should n't have been there in the first place. I signed up for XXXX a few years ago for {$19.00} a month. They started charging me almost {$50.00} a month without any notice. By the time I realized, the bill was high, and I had to cancel service. It has been through a few collection companies, but it is not from this year. The way it 's listed pulled down my score, and I 've been paying my current bills on time to raise my score."></option>
+                      <option value="credit card number : XXXX set up automatic payment to 'Pay amount due on due date' for this Bank of America Visa Card ( under XXXX XXXX XXXX ). However, on XXXX, only minimum payment of {$25.00} was deducted. This resulted in I being charged interest on XXXX ( and potentially future date ), and potentially affect my credit score. I contacted BOA but it is a mess there. I was being directed here and there with no resolution. \nThe mistake is unexcusable. My family have all kind of credit cards and have never seen a mistake like this. I like BOA to:1. correct his promptly and refund any penalty interest charged. \n2. explain to CFPB why this happen and how many customers have been affected by this mistake, how much fee they have collected out of this mistake. \n3. explain to me whether this affect my credit score and correct promptly if it does."></option>
+                  </datalist>
               </form>
               <span class="input-group-btn">
-                <button type="submit" class="btn btn-secondary" form="user_input" style="display: inline-block" >Predict</button>
+                  <button type="submit" class="btn btn-secondary" form="user_input" style="display: inline-block" >Predict</button>
               </span>
 
           </div>
@@ -158,7 +163,7 @@
 
 
       {% else %}
-      {% endif %}      
+      {% endif %}
     </div>
 
 
