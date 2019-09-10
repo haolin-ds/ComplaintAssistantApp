@@ -36,6 +36,15 @@ figure.  The web app will suggest a response type.  The suggested response type 
 type with maximum probability of escalation under a given threshold(currently 0.35).  I didn't 
 use the response with lowest escalation probability as suggested response types, because 
 "Money Relief" is always the winner.  However, "Money Relief" has more cost than other 
-response type for a company. Later, I will consider the cost of response type in my model. 
-![Website Example](static/img/website_view.png)
+response type for a company. Later, I will consider the cost of response type in my model.
+
+In the webpage, enter a complaint or select an example complaint from the drop list.
+![Website View](static/img/webview.png)
+
+## Result
+Here is an example of a complaint will probably escalation.
+![Escalation](static/img/ComplaintAssistant_escalation.png)
+
+This is an example of complaint will probably not escalate. 
+![NoEscalation](static/img/ComplaintAssistant_no_escalation.png)
 
