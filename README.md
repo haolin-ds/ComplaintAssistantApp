@@ -42,9 +42,9 @@ In the webpage, enter a complaint or select an example complaint from the drop l
 ![Website View](static/img/webview.png)
 
 ## Result
-Here is an example of a complaint will probably escalation.
+Here is an example of a complaint that will probably escalation.
 ![Escalation](static/img/ComplaintAssistant_escalation.png)
 
-This is an example of complaint will probably not escalate. 
+This is an example of complaint that will probably not escalate. 
 ![NoEscalation](static/img/ComplaintAssistant_no_escalation.png)
 
